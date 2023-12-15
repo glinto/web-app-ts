@@ -1,4 +1,4 @@
-export interface Storage<T> {
+export interface StorageBehavior<T> {
     /**
      * Retrieve a value from the store
      * @param key The key which identifies the value in the store
@@ -18,7 +18,7 @@ export interface Storage<T> {
     ready(): Promise<void>;
 }
 
-export class LocalStorageMap<T> implements Storage<T> {
+export class LocalStorageMap<T> implements StorageBehavior<T> {
     private map: Map<string, T>;
 
     constructor(private readonly key: string) {
