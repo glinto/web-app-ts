@@ -1,23 +1,30 @@
-export function notify(message: string) {
-    if (window?.Notification === undefined) {
-        console.warn("Notifications not supported");
-    } else if (window.Notification.permission === "granted") {
-        new window.Notification(message);
-    } else if (Notification.permission !== "denied") {
-        // We need to ask the user for permission
-        Notification.requestPermission()
-            .then((permission) => {
-                // If the user accepts, let's create a notification
-                if (permission === "granted") {
-                    new Notification(message);
-                    // …
-                }
-            })
-            .catch((err) => {
-                console.warn('Notification permission', err);
-            })
+export interface NotificationBehavior {
+    notify(message: string): Promise<void>
+}
+
+export class NotificationWrapper  implements NotificationBehavior {
+    constructor(private readonly registration: ServiceWorkerRegistration) {
+        if (registration.constructor.name !== 'ServiceWorkerRegistration') {
+            throw new Error('Invalid argument, must be ServieWorkerRegistration class');
+        }
     }
 
-    // At last, if the user has denied notifications, and you
-    // want to be respectful there is no need to bother them anymore.
+    notify(message: string): Promise<void> {
+        if (!("Notification" in window)) {
+            return Promise.reject("This browser does not support desktop notification");
+        } else if (Notification.permission === "granted") {
+            return this.registration.showNotification(message);
+        } else if (Notification.permission !== "denied") {
+            // We need to ask the user for permission
+            return Notification.requestPermission()
+                .then((permission) => {
+                    // If the user accepts, let's create a notification
+                    if (permission === "granted") {
+                        return this.registration.showNotification(message);
+                    }
+                    return Promise.reject('Notification permission denied');
+                });
+        }
+        return Promise.reject('Notification permission denied');
+    }
 }
