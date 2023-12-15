@@ -60,7 +60,7 @@ export class LocalStorageMap<T> implements StorageBehavior<T> {
     }
 
     protected persist() {
-        const obj: {[index: string]: T} = {};
+        const obj: { [index: string]: T } = {};
         Array.from(this.map.entries()).forEach(([key, value]) => {
             obj[key] = value;
         });

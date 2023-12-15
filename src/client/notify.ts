@@ -2,7 +2,7 @@ export interface NotificationBehavior {
     notify(message: string): Promise<void>
 }
 
-export class NotificationWrapper  implements NotificationBehavior {
+export class NotificationWrapper implements NotificationBehavior {
     constructor(private readonly registration: ServiceWorkerRegistration) {
         if (registration.constructor.name !== 'ServiceWorkerRegistration') {
             throw new Error('Invalid argument, must be ServieWorkerRegistration class');

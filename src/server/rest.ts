@@ -9,7 +9,7 @@ export interface RestObjectFactoryError {
     object: unknown;
 }
 
-function getMethod<This, Args extends any[], Return>(_pattern: string | RegExp) {
+export function getMethod<This, Args extends any[], Return>(_pattern: string | RegExp) {
     return function getDecorator(
         target: (this: This, ...args: Args) => Return,
         context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>
@@ -35,11 +35,11 @@ export class LatLngFactory implements RestObjectFactory<LatLng> {
     }
 
     validate(data: unknown): data is LatLng {
-        return typeof data === 'object' 
-        && data !== null 
-        && 'lat' in data 
-        && typeof data.lat === 'number'
-        && 'lng' in data
-        && typeof data.lng === 'number';
+        return typeof data === 'object'
+            && data !== null
+            && 'lat' in data
+            && typeof data.lat === 'number'
+            && 'lng' in data
+            && typeof data.lng === 'number';
     }
 }
