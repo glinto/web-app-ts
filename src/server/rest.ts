@@ -35,6 +35,11 @@ export class LatLngFactory implements RestObjectFactory<LatLng> {
     }
 
     validate(data: unknown): data is LatLng {
-        return typeof data === 'object' && data !== null && 'lat' in data && 'lng' in data;
+        return typeof data === 'object' 
+        && data !== null 
+        && 'lat' in data 
+        && typeof data.lat === 'number'
+        && 'lng' in data
+        && typeof data.lng === 'number';
     }
 }
