@@ -3,17 +3,15 @@
 export class WakeLock {
     private sentinel: WakeLockSentinel | undefined = undefined;
 
-    lock() {
+    lock(): Promise<WakeLockSentinel> {
         if (this.sentinel !== undefined) {
-            return;
+            return Promise.resolve(this.sentinel);
         }
-        navigator.wakeLock.request('screen')
+        return navigator.wakeLock.request('screen')
             .then((wakeLock) => {
                 this.sentinel = wakeLock;
                 this.sentinel.addEventListener('release', this.released);
-            })
-            .catch((err) => {
-                console.error('Could not obtain wake lock', err);
+                return this.sentinel;
             });
     }
 
@@ -30,11 +28,17 @@ export class WakeLock {
         }
     }
 
-    release() {
+    release(): Promise<void> {
         if (this.sentinel !== undefined) {
             this.sentinel.removeEventListener('release', this.released);
-            this.sentinel.release();
-            this.sentinel = undefined;
+            const sentinel = this.sentinel;
+            
+           
+            return sentinel.release()
+            .then(() => {
+                this.sentinel = undefined;
+            });
         }
+        return Promise.resolve();
     }
 }
