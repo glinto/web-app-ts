@@ -33,7 +33,6 @@ export class WakeLock {
             this.sentinel.removeEventListener('release', this.released);
             const sentinel = this.sentinel;
 
-
             return sentinel.release()
                 .then(() => {
                     this.sentinel = undefined;
