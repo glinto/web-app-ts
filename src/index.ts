@@ -1,20 +1,19 @@
 import { createServer } from 'http';
-import { NotFoundHandler, StaticURLHandler, URLHandler } from './server/handlers';
-import { Console } from './universal/app';
-import { LatLngFactory } from './server/rest';
-import path from 'path';
+import { NotFoundHandler, StaticURLHandler, URLHandler } from './server/handlers.js';
+import { Console } from './universal/app.js';
+import { LatLngFactory } from './server/rest.js';
+
 
 const PORT = 3081;
 const console = new Console();
 
 const llf = new LatLngFactory();
-
 llf.constructor.name;
 
 const handlers: URLHandler[] = [
-	new StaticURLHandler(path.join(__dirname, '../static')),
-	new StaticURLHandler(path.join(__dirname, '../dist/client')),
-	new StaticURLHandler(path.join(__dirname, '../dist/universal')),
+	new StaticURLHandler(dirname('../static')),
+	new StaticURLHandler(dirname('../dist/client'), '/js/client'),
+	new StaticURLHandler(dirname('../dist/universal'), '/js/universal'),
 	new NotFoundHandler()
 ];
 
@@ -29,3 +28,7 @@ const server = createServer((req, res) => {
 server.listen(PORT, () => {
 	console.log(`Server listening on :${PORT}`);
 });
+
+function dirname(path: string): string {
+	return new URL(path, import.meta.url).pathname;
+}
